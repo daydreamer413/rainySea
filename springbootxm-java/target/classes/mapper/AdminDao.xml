@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.AdminDao">
+
+    <resultMap type="com.example.entity.Admin" id="AdminMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="tel" column="tel" jdbcType="VARCHAR"/>
+        <result property="img" column="img" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="categoryid" column="categoryid" jdbcType="INTEGER"/>
+        <result property="typeid" column="typeid" jdbcType="INTEGER"/>
+        <result property="delstatus" column="delstatus" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--登录-->
+    <select id="selectLogin" resultMap="AdminMap">
+        select * from admin where 1=1 and username=#{username} and password=#{password} and role=#{role} and delstatus=0
+    </select>
+    <!--用户名的唯一性-->
+    <select id="selectOne" resultMap="AdminMap">
+        select * from admin where 1=1 and username=#{username}
+    </select>
+
+    <select id="selectAll" resultMap="AdminMap">
+        select * from admin where 1=1 and delstatus=0 and username!='admin'
+        <if test="key!=null and key!=''">
+            and name like "%"#{key}"%"
+        </if>
+        <if test="username!=null and username!=''">
+            and username =#{username}
+        </if>
+      <if test="role!=null and role!=''">
+            and role =#{role}
+        </if>
+        order by id desc
+    </select>
+
+    <select id="findById" parameterType="int" resultType="com.example.entity.Admin">
+        select * from Admin  where id=#{id}
+    </select>
+
+    <insert id="add" parameterType="com.example.entity.Admin">
+        insert into Admin values(null,#{username},#{password},#{name},#{sex},#{age},#{tel},#{img},#{role},0)
+    </insert>
+
+
+    <!--通过主键修改数据-->
+    <update id="update" parameterType="com.example.entity.Admin">
+        update admin
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="tel != null and tel != ''">
+                tel = #{tel},
+            </if>
+            <if test="img != null and img != ''">
+                img = #{img},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete from admin where id = #{id}
+    </delete>
+
+</mapper>
+
