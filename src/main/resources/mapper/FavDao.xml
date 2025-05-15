@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.FavDao">
+
+    <resultMap type="com.example.entity.Fav" id="FavMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="memberid" column="memberid" jdbcType="INTEGER"/>
+        <result property="shujuid" column="shujuid" jdbcType="INTEGER"/>
+        <result property="savetime" column="savetime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="findById" resultMap="FavMap">
+        select * from fav where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+  <select id="selectAll" resultMap="FavMap">
+          select * from fav where 1=1
+          <if test="key!=null and key!=''">and shujuid in (select id from shuju where name like "%"#{key}"%") </if>
+          <if test="memberid!=null and memberid!=''">and memberid = #{memberid}</if>
+          <if test="shujuid!=null and shujuid!=''">and shujuid = #{shujuid}</if>
+          order by id desc
+      </select>
+    <!--新增所有列-->
+    <insert id="add" keyProperty="id" useGeneratedKeys="true">
+        insert into fav values (null,#{memberid},#{shujuid},now())
+    </insert>
+    <!--通过主键修改数据-->
+    <update id="update">
+        update fav
+        <set>
+            <if test="memberid != null">
+                memberid = #{memberid},
+            </if>
+            <if test="shujuid != null">
+                shujuid = #{shujuid},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete from fav where id = #{id}
+    </delete>
+
+</mapper>
+
